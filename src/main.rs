@@ -12,6 +12,38 @@ fn get_number_of_columns() -> usize {
     n
 }
 
+fn clear_screen() {
+    println!("\x1B[2J");
+}
+
+fn print_game(game: &Vec<usize>) {
+    clear_screen();
+    let n = game.len();
+    
+    for i in 0..n {
+        print!("\t{}", i+1);
+    }
+    println!("\n");
+    for i in 0..MAX_SIZE {
+        for j in 0..n {
+            if game[j] >= MAX_SIZE-i {
+                print!("\t#");
+            } else {
+                print!("\t ");
+            }
+        }
+        println!("");
+    }
+    for _i in 0..n {
+        print!("\t-");
+    }
+    println!("");
+    for i in 0..n {
+        print!("\t{}", game[i]);
+    }
+    println!("");
+}
+
 fn initialize_game(n: usize) -> Vec<usize> {
     let mut game = vec![0; n];
     let mut rng = rand::thread_rng();
@@ -25,7 +57,7 @@ fn initialize_game(n: usize) -> Vec<usize> {
 fn main() {
     let n = get_number_of_columns();
     let game = initialize_game(n);
-    println!("{:?}", game);
+    print_game(&game);
 }
 
 
