@@ -18,13 +18,17 @@ impl Player {
     }
 }
 
-fn get_number_of_columns() -> usize {
-    print!("Enter number of columns : ");
+fn get_usize_from_user_input(prompt: &str) -> usize {
+    print!("{}", prompt);
     io::stdout().flush().unwrap();
-    let mut n = String::new();
-    io::stdin().read_line(&mut n).unwrap();
-    let n: usize = n.trim().parse().expect("Not a number.");
-    n
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).unwrap();
+    let input: usize = input.trim().parse().expect("Not a number.");
+    input
+}
+
+fn get_number_of_columns() -> usize {
+    get_usize_from_user_input("Enter number of columns : ")
 }
 
 fn clear_screen() {
@@ -32,9 +36,9 @@ fn clear_screen() {
 }
 
 fn print_game(game: &Vec<usize>) {
-    clear_screen();
     let n = game.len();
     
+    println!("\n");
     for i in 0..n {
         print!("\t{}", i+1);
     }
@@ -85,9 +89,58 @@ fn check_game_over(game: &Vec<usize>) -> bool {
     return true;
 }
 
+fn get_computer_move(game: &Vec<usize>) -> (usize, usize) {
+    let mut rng = rand::thread_rng();
+    
+    let mut column: usize;
+    loop {
+        column = rng.gen_range(0, game.len());
+        if game[column] > 0 {
+            break;
+        }
+    }
+    
+    let nim: usize = rng.gen_range(1, game[column]+1);
+    
+    println!("Computer's move.");
+    println!("Computer removed {} #s from column {}.", nim, column+1);
+    (column, nim)
+}
+
+fn get_human_move(game: &Vec<usize>) -> (usize, usize) {
+    println!("Your move.");
+    let mut column: usize;
+    loop {
+        column = get_usize_from_user_input("Enter the column number to remove #s from : ");
+        if column > game.len() {
+            println!("{} is not a valid column number.", column);
+            continue;
+        } else if game[column-1] == 0 {
+            println!("The column is already empty.");
+            continue;
+        }
+        break;
+    }
+    column = column - 1;
+    
+    let mut nim: usize;
+    loop {
+        nim = get_usize_from_user_input("Enter the number of #s to remove : ");
+        if game[column] < nim {
+            println!("The column has only {} #. Enter a number less than or equal to that.", game[column]);
+            continue;
+        } else if nim <= 0 {
+            println!("Enter a number greater than 0.");
+            continue;
+        }
+        break;
+    }
+    (column, nim)
+}
+
 fn main() {
     let n = get_number_of_columns();
-    let game = initialize_game(n);
+    let mut game = initialize_game(n);
     
     let mut player: Player = if rand::random() {
         Player::Human
@@ -97,11 +150,15 @@ fn main() {
     
     loop {
         print_game(&game);
-        println!("Move : {:?}", player);
         if check_game_over(&game) {
             display_finish_message(player);
             break;
         }
-        player.switch()
+        let next_move = match player {
+            Player::Computer => get_computer_move(&game),
+            Player::Human => get_human_move(&game),
+        };
+        game[next_move.0] -= next_move.1;
+        player.switch();
     }
 }
