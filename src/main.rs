@@ -31,10 +31,6 @@ fn get_number_of_columns() -> usize {
     get_usize_from_user_input("Enter number of columns : ")
 }
 
-fn clear_screen() {
-    println!("\x1B[2J");
-}
-
 fn print_game(game: &Vec<usize>) {
     let n = game.len();
     
