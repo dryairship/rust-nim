@@ -9,6 +9,15 @@ enum Player {
     Human
 }
 
+impl Player {
+    fn switch(&mut self) {
+        match self {
+            Player::Computer => *self = Player::Human,
+            Player::Human => *self = Player::Computer,
+        }
+    }
+}
+
 fn get_number_of_columns() -> usize {
     print!("Enter number of columns : ");
     io::stdout().flush().unwrap();
@@ -71,12 +80,20 @@ fn main() {
     let n = get_number_of_columns();
     let game = initialize_game(n);
     
-    let player: Player;
+    let mut player: Player;
     if rand::random() {
         player = Player::Human
     } else {
         player = Player::Computer;
     }
     
-    display_finish_message(player);
+    println!("{:?}", player);
+    player.switch();
+    println!("{:?}", player);
+    player.switch();
+    println!("{:?}", player);
+    player.switch();
+    println!("{:?}", player);
+    player.switch();
+    println!("{:?}", player);
 }
