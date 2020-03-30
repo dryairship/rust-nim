@@ -3,6 +3,12 @@ use rand::Rng;
 
 const MAX_SIZE: usize = 10;
 
+#[derive(Debug)]
+enum Player {
+    Computer,
+    Human
+}
+
 fn get_number_of_columns() -> usize {
     print!("Enter number of columns : ");
     io::stdout().flush().unwrap();
@@ -58,6 +64,12 @@ fn main() {
     let n = get_number_of_columns();
     let game = initialize_game(n);
     print_game(&game);
+    
+    let player: Player;
+    if rand::random() {
+        player = Player::Human
+    } else {
+        player = Player::Computer;
+    }
+    println!("{:?}", player);
 }
-
-
