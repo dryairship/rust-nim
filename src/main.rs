@@ -6,7 +6,7 @@ const MAX_SIZE: usize = 10;
 #[derive(Debug)]
 enum Player {
     Computer,
-    Human
+    Human,
 }
 
 impl Player {
@@ -72,28 +72,36 @@ fn initialize_game(n: usize) -> Vec<usize> {
 fn display_finish_message(loser: Player) {
     match loser {
         Player::Human => println!("You lost! Better luck next time."),
-        Player::Computer => println!("Congratulations! You won the game!")
+        Player::Computer => println!("Congratulations! You won the game!"),
     }
+}
+
+fn check_game_over(game: &Vec<usize>) -> bool {
+    for column in game.iter() {
+        if *column != 0 {
+            return false;
+        }
+    }
+    return true;
 }
 
 fn main() {
     let n = get_number_of_columns();
     let game = initialize_game(n);
     
-    let mut player: Player;
-    if rand::random() {
-        player = Player::Human
+    let mut player: Player = if rand::random() {
+        Player::Human
     } else {
-        player = Player::Computer;
-    }
+        Player::Computer
+    };
     
-    println!("{:?}", player);
-    player.switch();
-    println!("{:?}", player);
-    player.switch();
-    println!("{:?}", player);
-    player.switch();
-    println!("{:?}", player);
-    player.switch();
-    println!("{:?}", player);
+    loop {
+        print_game(&game);
+        println!("Move : {:?}", player);
+        if check_game_over(&game) {
+            display_finish_message(player);
+            break;
+        }
+        player.switch()
+    }
 }
