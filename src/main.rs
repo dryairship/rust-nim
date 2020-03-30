@@ -60,10 +60,16 @@ fn initialize_game(n: usize) -> Vec<usize> {
     game
 }
 
+fn display_finish_message(loser: Player) {
+    match loser {
+        Player::Human => println!("You lost! Better luck next time."),
+        Player::Computer => println!("Congratulations! You won the game!")
+    }
+}
+
 fn main() {
     let n = get_number_of_columns();
     let game = initialize_game(n);
-    print_game(&game);
     
     let player: Player;
     if rand::random() {
@@ -71,5 +77,6 @@ fn main() {
     } else {
         player = Player::Computer;
     }
-    println!("{:?}", player);
+    
+    display_finish_message(player);
 }
